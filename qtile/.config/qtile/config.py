@@ -105,7 +105,7 @@ for i in groups:
 layouts = [
     layout.Columns(
         border_focus_stack="#bd93f9",
-        border_width=1,
+        border_width=4,
         border_focus="#bd93f9",
         margin=8,
         ),
