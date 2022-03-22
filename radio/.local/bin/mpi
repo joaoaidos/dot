@@ -1,0 +1,3 @@
+#! /bin/bash
+
+echo '{ "command": ["loadfile", ' \"$1\" ', "append-play"] }' | socat - /tmp/mpvsocket

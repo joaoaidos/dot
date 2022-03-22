@@ -1,0 +1,117 @@
+#!/bin/python3
+
+import subprocess
+import bs4 as bs
+import requests
+from subprocess import PIPE
+import re
+import datetime
+#import os
+
+headers = {'Connection' : 'keep-alive',
+    'Upgrade-Insecure-Requests' : '1',
+    'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
+    'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Encoding' : 'gzip, deflate, sdch',
+    'Accept-Language' : 'en-US,en;q=0.8'}
+
+def site_select(url) -> dict:
+    source = requests.get(url, headers=headers)
+    soup = bs.BeautifulSoup(source.text,'lxml')
+
+    titles = soup.find_all('h3', class_='threadtitle')
+
+    sites = {}
+
+    for title in titles[1:]:
+        base   = title.find_all('a', class_='title')[1]
+        url    = base['href'].split('?s=')[0]
+        url    = f"https://vipergirls.to/{url}"
+        header = title.text
+        header = re.sub(r'\s+', ' ', header)
+        header = re.sub(r'^ ', '', header)
+        sites[header] = url
+
+    return sites # return a dict of all sites vipergirls
+
+def selector(mapper) -> dict:
+    select = subprocess.run(['fzf', '-m'], stdout=PIPE,
+             input='\n'.join(mapper.keys()), encoding='utf-8').stdout
+
+    if not select: return {}
+    select = select.split('\n')[:-1]
+    select = {x: mapper[x] for x in select}
+
+    return select # Select the sites that I want
+
+def viper_img(url):
+    source = requests.get(url, headers=headers)
+    soup   = bs.BeautifulSoup(source.text,'lxml')
+
+    titles = soup.find_all('div', class_='content')
+    imgs  = []
+    for title in titles:
+        img = title.find_all('img')
+        if img: imgs.append([i['src'] for i in img])
+
+    return imgs #retrun a list of lists of all imgs
+
+def rss_viper_img(url):
+    source = requests.get(url, headers=headers)
+    soup   = bs.BeautifulSoup(source.text,'lxml')
+
+    titles = soup.find_all('div', class_='content')
+    imgs  = []
+    for title in titles:
+        img = title.find_all('img')
+        if img: imgs.append([i['src'] for i in img])
+
+
+    date = soup.find("span", class_="date").text
+    date = date.split('\xa0')
+
+    date[0] = re.sub(r'(\d)(st|nd|rd|th)', r'\1', date[0])
+    date[0] = re.sub(r',', r'', date[0])
+    hour, minute = date[1].split(':')
+    if date[0] == 'Today':
+        year = datetime.datetime.now()
+    elif date[0] == 'Yesterday':
+        year = datetime.datetime.now()- datetime.timedelta(days=1)
+    else:
+        year = datetime.datetime.strptime(date[0], "%d %B %Y")
+
+    year = year.replace(hour=int(hour), minute=int(minute), second=0)
+
+    return year, imgs #return a list of lists of all imgs
+
+url   = "https://vipergirls.to/forumdisplay.php?f=303&newset=1"
+sites = site_select(url)
+
+print(f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:a10="http://www.w3.org/2005/Atom" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" version="2.0">
+
+<channel>
+  <title>Viper Girls</title>
+  <link>{url}</link>
+  <description>Porn</description>
+  <lastBuildDate>{datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S %z')}</lastBuildDate>""")
+for title, url in sites.items():
+    date, imgs = rss_viper_img(url)
+    print(f"""  <item>
+    <title>{title}</title>
+    <link>{url}</link>
+    <guid>{url}</guid>
+    <pubDate>{date.strftime('%a, %d %b %Y %H:%M:%S %z')}</pubDate>
+    <description>
+    """)
+    for img in imgs:
+        pimg = [f"{i}" for i in img]
+        print('\n'.join(pimg))
+        print()
+        print()
+    print("    </description>")
+    print("  </item>")
+
+print("""</channel>
+</rss>""")
+#img = viper_img(url)

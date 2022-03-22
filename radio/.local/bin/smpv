@@ -1,0 +1,3 @@
+#! /bin/sh
+
+mpv --idle=yes --input-ipc-server=/tmp/mpvsocket --keep-open --keep-open-pause=no
