@@ -4,8 +4,7 @@ local term_opts = { silent = true }
 
 -- vim.g.mapleader = ','
 
-keymap("n", "<leader>p", "Go<esc>:$r!curl -s https://api.crossref.org/works/<C-R>+/transform/application/x-bibtex<CR>", opts)
-
+keymap("n", "<leader>d", "Go<esc>:$r!curl -s https://api.crossref.org/works/<C-R>+/transform/application/x-bibtex<CR>", opts)
 
 
 
@@ -18,4 +17,5 @@ keymap("n", "<leader>p", "Go<esc>:$r!curl -s https://api.crossref.org/works/<C-R
 -- keymap('n', '<C-l>', '<C-w>l', opts)
 -- keymap('n', '<C-j>', '<C-w>j', opts)
 -- keymap('n', '<C-k>', '<C-w>k', opts)
+
 

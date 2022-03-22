@@ -28,10 +28,14 @@ vim.g.dracula_colors = {
 -- show the '~' characters after the end of buffers
 vim.g.dracula_show_end_of_buffer = true
 -- use transparent background
-vim.g.dracula_transparent_bg = true
+vim.g.dracula_transparent_bg = 1
 -- set custom lualine background color
 vim.g.dracula_lualine_bg_color = "#44475a"
 -- set italic comment
 vim.g.dracula_italic_comment = true
 
-vim.cmd[[highlight! link TSPunctSpecial Blue]]
+vim.cmd[[
+highlight! link TSPunctSpecial Blue
+highlight! Normal guibg=NONE ctermbg=NONE
+]]
+
