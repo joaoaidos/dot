@@ -24,10 +24,11 @@
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, widget
+from libqtile import bar, layout, widget, qtile
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
+from libqtile.log_utils import logger
 
 mod = "mod4"
 terminal = guess_terminal()
@@ -73,7 +74,9 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+
     Key([mod], "f", lazy.window.toggle_floating(), desc="Toggle Float"),
+    Key([mod], "p", lazy.spawn("passmenu -l 10 -sb '#bd93f9' -sf '#282a36' -p '>'"), desc="Toggle Float"),
 ]
 
 groups = [Group(i) for i in "123456789"]
@@ -124,6 +127,27 @@ layouts = [
     # layout.Zoomy(),
 ]
 
+###### MOUSE CALLBCAK #####
+
+state = 'land'
+
+def screenRotation():
+    global state
+    if state == 'land':
+       qtile.cmd_spawn("/home/joao/.local/bin/screenrotation left") 
+       state = 'port'
+    else:
+       qtile.cmd_spawn("/home/joao/.local/bin/screenrotation") 
+       state = 'land'
+
+    qtile.widgets_map["screen"].update(f"[{state}]")
+    logger.warning(type(qtile.widgets_map["textbox"]))
+   #qtile.cmd_spawn("passmenu -l 10 -sb '#bd93f9' -sf '#282a36' -p '>'") 
+
+
+
+###### WIDGET ######
+
 widget_defaults = dict(
     font="sans",
     fontsize=16,
@@ -148,8 +172,9 @@ screens = [
                     '|'
                     ),
 
-                widget.Prompt(),
                 widget.WindowName(),
+
+                widget.Prompt(),
                 widget.Chord(
                     chords_colors={
                         "launch": ("#ff0000", "#ffffff"),
@@ -158,20 +183,34 @@ screens = [
                 ),
                 # widget.TextBox("default config", name="default"),
                 # widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                widget.Systray(),
+                #widget.Systray(),
 
-                widget.Backlight(
-                    backlight_name="intel_backlight"
+
+                widget.TextBox(
+                    '|'
+                    ),
+
+
+                widget.Net(
+                    interface="wlp1s0",
+                    format="{down}↓↑{up}",
+                    max_chars=16
+                    ),
+
+                widget.Wlan(
+                    disconnected_message = "OFF",
+                    interface="wlp1s0",
+                    format="{essid}"
                     ),
 
                 widget.TextBox(
                     '|'
                     ),
 
-                widget.Net(
-                    interface="wlp1s0",
-                    format="{down}↓↑{up}",
-                    max_chars=16
+                widget.Backlight(
+                    backlight_name="intel_backlight",
+                    format= '{percent:2.0%}',
+                    step = 5
                     ),
 
                 widget.TextBox(
@@ -191,8 +230,15 @@ screens = [
                     '|'
                     ),
 
+
                 widget.Clock(format="%Y-%m-%d %a %H:%M"),
-                widget.QuickExit(),
+
+                widget.TextBox(
+                    f'[{state}]',
+                    mouse_callbacks = {'Button1': screenRotation},
+                    name="screen"
+                    ),
+                #widget.QuickExit(),
             ],
             24,
             background="#282a36",
