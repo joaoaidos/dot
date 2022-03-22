@@ -2,6 +2,9 @@
 
 ## Programas
 
+* zoxide
+
 ``` html
 http://0x0.st/oKFi.png
 ```
+### zoxide
