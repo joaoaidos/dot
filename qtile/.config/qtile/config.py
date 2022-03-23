@@ -210,16 +210,6 @@ screens = [
                     '|'
                     ),
 
-                widget.Backlight(
-                    backlight_name="intel_backlight",
-                    format= '{percent:2.0%}',
-                    step = 5
-                    ),
-
-                widget.TextBox(
-                    '|'
-                    ),
-
                 widget.Battery(
                     discharge_char="",
                     charge_char="",
@@ -227,6 +217,17 @@ screens = [
                     unknown_char="?",
                     format='{percent:2.0%} {char}',
                     update_interval=5,
+                    ),
+
+                widget.TextBox(
+                    '|'
+                    ),
+
+                widget.Backlight(
+                    foreground = "#f1fa8c",
+                    backlight_name="intel_backlight",
+                    format= '{percent:2.0%}',
+                    step = 5
                     ),
 
                 widget.TextBox(
