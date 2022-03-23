@@ -1,12 +1,3 @@
-#! /usr/bin/python3
+#! /bin/bash
 
-import article_parser
-import sys
-import re
-
-try:
-    title, content = article_parser.parse(url=sys.argv[1])
-    print(f'# {title}')
-    print(content)
-except IndexError:
-    raise Exception('Provide a url')
+curl -Ss https://txtify.it/$1
