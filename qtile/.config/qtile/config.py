@@ -60,6 +60,7 @@ keys = [
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
+
     Key(
         [mod, "shift"],
         "Return",
@@ -197,7 +198,9 @@ screens = [
                     max_chars=16
                     ),
 
+
                 widget.Wlan(
+                    foreground = "#bd93f9",
                     disconnected_message = "OFF",
                     interface="wlp1s0",
                     format="{essid}"
