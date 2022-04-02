@@ -1,8 +1,15 @@
 #! /bin/sh
 
-cat "/home/joao/.config/radio/urls" |
-dmenu -l 10 -sb '#bd93f9' -sf '#282a36' -p '>'|
-awk '{print $2}'|
-mpv --no-video --playlist=- 
+list="$(cat "/home/joao/.config/radio/urls" | dmenu -l 10 -sb '#bd93f9' -sf '#282a36' -p '>')"
+
+
+channel="$(echo $list| awk '{print $2}')"
+cover="$(echo $list| awk '{print $1}')"
+cover="$(echo $list| awk '{print $1}')"
+
+cover="/home/joao/dot/radio/.local/share/radio/imgs/$cover.png"
+
+echo $cover
+mpv $channel --cover-art-file=$cover
 #mpv --force-window=no --no-video --playlist=- 
 
