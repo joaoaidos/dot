@@ -1,0 +1,5 @@
+#! /bin/bash
+
+
+nitrogen --set-zoom-fill $1 &&
+convert -scale 10% -blur 0x2.5 -resize 1000% $1 /usr/share/pixmaps/backlightDM.jpeg
